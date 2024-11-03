@@ -70,7 +70,6 @@ const generateCommentMessage = () => {
     message += getRandomArrayElement(COMMENTS_ARRAY);
     message += ' ';
   }
-
   return message.trim();
 };
 
@@ -90,7 +89,6 @@ const createCommentObject = () => {
 
 let createObject = () => {
   const idNumber = idGenerator();
-
   return {
     id: idNumber,
     url: `photos/${idNumber}.jpg`,
