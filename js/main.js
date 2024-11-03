@@ -34,6 +34,8 @@ const COMMENTS_ARRAY = [
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
 
+const LENGTH_ARRAY = 25;
+
 const getRandomInteger = (a, b) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -65,12 +67,8 @@ function createRandomIdFromRangeGenerator (min, max) {
 }
 
 const generateCommentMessage = () => {
-  let message = '';
-  for (let i = 0; i < getRandomInteger(1, 2); i++) {
-    message += getRandomArrayElement(COMMENTS_ARRAY);
-    message += ' ';
-  }
-  return message.trim();
+  const messageParts = Array.from({ length: getRandomInteger(1, 2) }, () => getRandomArrayElement(COMMENTS_ARRAY));
+  return messageParts.join(' ');
 };
 
 
@@ -87,7 +85,7 @@ const createCommentObject = () => {
 };
 
 
-let createObject = () => {
+const createObject = () => {
   const idNumber = idGenerator();
   return {
     id: idNumber,
@@ -98,5 +96,5 @@ let createObject = () => {
   };
 };
 
-const objectsArray = Array.from({ length: 25 }, createObject);
+const objectsArray = Array.from({ length: LENGTH_ARRAY }, createObject);
 
