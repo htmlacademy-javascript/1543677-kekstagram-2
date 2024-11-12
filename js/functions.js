@@ -52,3 +52,5 @@ function checkMeetingTime(...args) {
   return false;
 }
 
+checkMeetingTime('08:00', '17:30', '14:00', 90);
+
