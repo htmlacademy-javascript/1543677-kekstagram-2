@@ -1,4 +1,1 @@
-import { objectsPhotoArray } from './data.js';
-
-objectsPhotoArray();
-
+import {} from './thumbnails.js';
