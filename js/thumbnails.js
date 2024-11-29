@@ -22,3 +22,6 @@ dataArrayObject.forEach((data)=> {
 });
 
 picturesContainer.appendChild(pictureListFragment);
+
+export const dataArrayObjectElement = (n) => dataArrayObject[n];
+

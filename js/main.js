@@ -1,1 +1,2 @@
-import {} from './thumbnails.js';
+import './thumbnails.js';
+import './full-image.js';
