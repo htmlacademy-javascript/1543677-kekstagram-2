@@ -1,4 +1,5 @@
 import { objectsPhotoArray } from './data.js';
+import { setupPictureHandler} from './full-image.js';
 
 const dataArrayObject = objectsPhotoArray();
 
@@ -18,7 +19,11 @@ dataArrayObject.forEach((data)=> {
   pictureImage.alt = data.description;
   pictureComments.texContent = data.comments.length;
   pictureLikes.texContent = data.likes;
+  setupPictureHandler(pictureClone, data);
   pictureListFragment.appendChild(pictureClone);
 });
 
 picturesContainer.appendChild(pictureListFragment);
+
+export const dataArrayObjectElement = (n) => dataArrayObject[n];
+
