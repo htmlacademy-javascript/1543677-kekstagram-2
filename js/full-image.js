@@ -32,21 +32,23 @@ function makePictureBig(pictureObj) {
   socialComments.innerHTML = '';
 
   const endOfArray = pictureObj.comments.length <= 5 ? pictureObj.comments.length : 5;
-  for (let i = 0; i < endOfArray; i++) {
-    const socialCommentClone = socialComment.cloneNode(true);
-    const socialCommentImage = socialCommentClone.querySelector('img');
-    const socialCommentText = socialCommentClone.querySelector('p');
+  if (endOfArray !== 0) {
+    for (let i = 0; i < endOfArray; i++) {
+      const socialCommentClone = socialComment.cloneNode(true);
+      const socialCommentImage = socialCommentClone.querySelector('img');
+      const socialCommentText = socialCommentClone.querySelector('p');
+      socialCommentShownCount.textContent = endOfArray;
+      socialCommentImage.src = pictureObj.comments[i].avatar;
+      socialCommentText.textContent = pictureObj.comments[i].message;
+      socialComments.appendChild(socialCommentClone);
+    }
+  } else {
     socialCommentShownCount.textContent = endOfArray;
-
-    socialCommentImage.src = pictureObj.comments[i].avatar;
-    socialCommentText.textContent = pictureObj.comments[i].message;
-    socialComments.appendChild(socialCommentClone);
   }
 
   // Создаём и добавляем обработчик для commentsLoader
   commentsLoaderHandler = () => {
     const [start, end] = genarateStartAndEndArray();
-    console.log(`Loading comments from ${start} to ${end}`);
 
     const endAddArray = pictureObj.comments.length <= end ? pictureObj.comments.length : end;
     for (let i = start; i < endAddArray; i++) {
@@ -114,13 +116,6 @@ closeBigPictureElement.addEventListener('click', (evt) => {
   closeBigPicture();
 });
 
-// Связь с конкретным изображением
-function setupPictureHandler(pictureElement, pictureObj) {
-  pictureElement.addEventListener('click', (evt) => {
-    evt.preventDefault();
-    makePictureBig(pictureObj);
-  });
-}
 
 function genarateStartAndEndArray() {
   const start = count;
@@ -129,4 +124,4 @@ function genarateStartAndEndArray() {
   return [start, end];
 }
 
-export { setupPictureHandler };
+export { makePictureBig };
