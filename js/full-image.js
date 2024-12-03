@@ -11,12 +11,17 @@ const socialComment = socialComments.querySelector('.social__comment');
 const socialCaption = bigPicture.querySelector('.social__caption');
 const bodyPage = document.querySelector('body');
 
+let count = 5;
+
 const onDocumentKeydown = (evt) => {
   if (evt.key === 'Escape') {
     evt.preventDefault();
     closeBigPicture();
   }
 };
+
+// Ссылка на текущий обработчик
+let commentsLoaderHandler = null;
 
 function makePictureBig(pictureObj) {
   bigPictureImg.src = pictureObj.url;
@@ -26,21 +31,56 @@ function makePictureBig(pictureObj) {
 
   socialComments.innerHTML = '';
 
-  for (let i = 0; i < pictureObj.comments.length; i++) {
+  const endOfArray = pictureObj.comments.length <= 5 ? pictureObj.comments.length : 5;
+  for (let i = 0; i < endOfArray; i++) {
     const socialCommentClone = socialComment.cloneNode(true);
     const socialCommentImage = socialCommentClone.querySelector('img');
     const socialCommentText = socialCommentClone.querySelector('p');
-    socialCommentShownCount.textContent = pictureObj.comments.length;
+    socialCommentShownCount.textContent = endOfArray;
 
     socialCommentImage.src = pictureObj.comments[i].avatar;
     socialCommentText.textContent = pictureObj.comments[i].message;
     socialComments.appendChild(socialCommentClone);
   }
 
-  if (pictureObj.comments.length <= 5) {
+  // Создаём и добавляем обработчик для commentsLoader
+  commentsLoaderHandler = () => {
+    const [start, end] = genarateStartAndEndArray();
+    console.log(`Loading comments from ${start} to ${end}`);
+
+    const endAddArray = pictureObj.comments.length <= end ? pictureObj.comments.length : end;
+    for (let i = start; i < endAddArray; i++) {
+      const socialCommentClone = socialComment.cloneNode(true);
+      const socialCommentImage = socialCommentClone.querySelector('img');
+      const socialCommentText = socialCommentClone.querySelector('p');
+      socialCommentShownCount.textContent = endAddArray;
+      socialCommentImage.src = pictureObj.comments[i].avatar;
+      socialCommentText.textContent = pictureObj.comments[i].message;
+      socialComments.appendChild(socialCommentClone);
+    }
+
+    if (pictureObj.comments.length <= endAddArray) {
+      commentsLoader.classList.add('hidden');
+      if (commentsLoaderHandler) {
+        commentsLoader.removeEventListener('click', commentsLoaderHandler);
+        commentsLoaderHandler = null; // Очищаем ссылку, чтобы предотвратить утечки памяти
+      }
+    } else {
+      commentsLoader.classList.remove('hidden');
+      commentsLoader.addEventListener('click', commentsLoaderHandler);
+    }
+
+  };
+
+  if (pictureObj.comments.length <= endOfArray) {
     commentsLoader.classList.add('hidden');
+    if (commentsLoaderHandler) {
+      commentsLoader.removeEventListener('click', commentsLoaderHandler);
+      commentsLoaderHandler = null; // Очищаем ссылку, чтобы предотвратить утечки памяти
+    }
   } else {
     commentsLoader.classList.remove('hidden');
+    commentsLoader.addEventListener('click', commentsLoaderHandler);
   }
 
   bodyPage.classList.add('modal-open');
@@ -48,6 +88,9 @@ function makePictureBig(pictureObj) {
 
   // Добавляем обработчик нажатия клавиши
   document.addEventListener('keydown', onDocumentKeydown);
+
+
+  //commentsLoader.addEventListener('click', commentsLoaderHandler);
 }
 
 function closeBigPicture() {
@@ -55,6 +98,14 @@ function closeBigPicture() {
   bodyPage.classList.remove('modal-open');
 
   document.removeEventListener('keydown', onDocumentKeydown);
+
+  // Удаляем обработчик с commentsLoader
+  if (commentsLoaderHandler) {
+    commentsLoader.removeEventListener('click', commentsLoaderHandler);
+    commentsLoaderHandler = null; // Очищаем ссылку, чтобы предотвратить утечки памяти
+  }
+
+  count = 5;
 }
 
 // Закрытие модального окна
@@ -71,4 +122,11 @@ function setupPictureHandler(pictureElement, pictureObj) {
   });
 }
 
-export {setupPictureHandler};
+function genarateStartAndEndArray() {
+  const start = count;
+  count += 5;
+  const end = count;
+  return [start, end];
+}
+
+export { setupPictureHandler };
