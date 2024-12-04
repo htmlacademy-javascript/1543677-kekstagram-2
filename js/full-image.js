@@ -31,17 +31,9 @@ function makePictureBig(pictureObj) {
 
   socialComments.innerHTML = '';
 
-  const endOfArray = pictureObj.comments.length <= 5 ? pictureObj.comments.length : 5;
+  const endOfArray = Math.min(pictureObj.comments.length, 5);
   if (endOfArray !== 0) {
-    for (let i = 0; i < endOfArray; i++) {
-      const socialCommentClone = socialComment.cloneNode(true);
-      const socialCommentImage = socialCommentClone.querySelector('img');
-      const socialCommentText = socialCommentClone.querySelector('p');
-      socialCommentShownCount.textContent = endOfArray;
-      socialCommentImage.src = pictureObj.comments[i].avatar;
-      socialCommentText.textContent = pictureObj.comments[i].message;
-      socialComments.appendChild(socialCommentClone);
-    }
+    makeListOfComment(0, endOfArray, pictureObj);
   } else {
     socialCommentShownCount.textContent = endOfArray;
   }
@@ -50,18 +42,10 @@ function makePictureBig(pictureObj) {
   commentsLoaderHandler = () => {
     const [start, end] = genarateStartAndEndArray();
 
-    const endAddArray = pictureObj.comments.length <= end ? pictureObj.comments.length : end;
-    for (let i = start; i < endAddArray; i++) {
-      const socialCommentClone = socialComment.cloneNode(true);
-      const socialCommentImage = socialCommentClone.querySelector('img');
-      const socialCommentText = socialCommentClone.querySelector('p');
-      socialCommentShownCount.textContent = endAddArray;
-      socialCommentImage.src = pictureObj.comments[i].avatar;
-      socialCommentText.textContent = pictureObj.comments[i].message;
-      socialComments.appendChild(socialCommentClone);
-    }
+    const endArray = Math.min(pictureObj.comments.length, end);
+    makeListOfComment(start, endArray, pictureObj);
 
-    if (pictureObj.comments.length <= endAddArray) {
+    if (pictureObj.comments.length <= endArray) {
       commentsLoader.classList.add('hidden');
       if (commentsLoaderHandler) {
         commentsLoader.removeEventListener('click', commentsLoaderHandler);
@@ -69,7 +53,6 @@ function makePictureBig(pictureObj) {
       }
     } else {
       commentsLoader.classList.remove('hidden');
-      commentsLoader.addEventListener('click', commentsLoaderHandler);
     }
 
   };
@@ -82,7 +65,6 @@ function makePictureBig(pictureObj) {
     }
   } else {
     commentsLoader.classList.remove('hidden');
-    commentsLoader.addEventListener('click', commentsLoaderHandler);
   }
 
   bodyPage.classList.add('modal-open');
@@ -91,8 +73,7 @@ function makePictureBig(pictureObj) {
   // Добавляем обработчик нажатия клавиши
   document.addEventListener('keydown', onDocumentKeydown);
 
-
-  //commentsLoader.addEventListener('click', commentsLoaderHandler);
+  commentsLoader.addEventListener('click', commentsLoaderHandler);
 }
 
 function closeBigPicture() {
@@ -122,6 +103,18 @@ function genarateStartAndEndArray() {
   count += 5;
   const end = count;
   return [start, end];
+}
+
+function makeListOfComment(start, endOfArray, pictureObj) {
+  for (let i = start; i < endOfArray; i++) {
+    const socialCommentClone = socialComment.cloneNode(true);
+    const socialCommentImage = socialCommentClone.querySelector('img');
+    const socialCommentText = socialCommentClone.querySelector('p');
+    socialCommentShownCount.textContent = endOfArray;
+    socialCommentImage.src = pictureObj.comments[i].avatar;
+    socialCommentText.textContent = pictureObj.comments[i].message;
+    socialComments.appendChild(socialCommentClone);
+  }
 }
 
 export { makePictureBig };
