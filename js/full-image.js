@@ -31,35 +31,21 @@ function makePictureBig(pictureObj) {
 
   socialComments.innerHTML = '';
 
-  const endOfArray = pictureObj.comments.length <= 5 ? pictureObj.comments.length : 5;
-  for (let i = 0; i < endOfArray; i++) {
-    const socialCommentClone = socialComment.cloneNode(true);
-    const socialCommentImage = socialCommentClone.querySelector('img');
-    const socialCommentText = socialCommentClone.querySelector('p');
+  const endOfArray = Math.min(pictureObj.comments.length, 5);
+  if (endOfArray !== 0) {
+    makeListOfComment(0, endOfArray, pictureObj);
+  } else {
     socialCommentShownCount.textContent = endOfArray;
-
-    socialCommentImage.src = pictureObj.comments[i].avatar;
-    socialCommentText.textContent = pictureObj.comments[i].message;
-    socialComments.appendChild(socialCommentClone);
   }
 
   // Создаём и добавляем обработчик для commentsLoader
   commentsLoaderHandler = () => {
     const [start, end] = genarateStartAndEndArray();
-    console.log(`Loading comments from ${start} to ${end}`);
 
-    const endAddArray = pictureObj.comments.length <= end ? pictureObj.comments.length : end;
-    for (let i = start; i < endAddArray; i++) {
-      const socialCommentClone = socialComment.cloneNode(true);
-      const socialCommentImage = socialCommentClone.querySelector('img');
-      const socialCommentText = socialCommentClone.querySelector('p');
-      socialCommentShownCount.textContent = endAddArray;
-      socialCommentImage.src = pictureObj.comments[i].avatar;
-      socialCommentText.textContent = pictureObj.comments[i].message;
-      socialComments.appendChild(socialCommentClone);
-    }
+    const endArray = Math.min(pictureObj.comments.length, end);
+    makeListOfComment(start, endArray, pictureObj);
 
-    if (pictureObj.comments.length <= endAddArray) {
+    if (pictureObj.comments.length <= endArray) {
       commentsLoader.classList.add('hidden');
       if (commentsLoaderHandler) {
         commentsLoader.removeEventListener('click', commentsLoaderHandler);
@@ -67,7 +53,6 @@ function makePictureBig(pictureObj) {
       }
     } else {
       commentsLoader.classList.remove('hidden');
-      commentsLoader.addEventListener('click', commentsLoaderHandler);
     }
 
   };
@@ -80,7 +65,6 @@ function makePictureBig(pictureObj) {
     }
   } else {
     commentsLoader.classList.remove('hidden');
-    commentsLoader.addEventListener('click', commentsLoaderHandler);
   }
 
   bodyPage.classList.add('modal-open');
@@ -89,8 +73,7 @@ function makePictureBig(pictureObj) {
   // Добавляем обработчик нажатия клавиши
   document.addEventListener('keydown', onDocumentKeydown);
 
-
-  //commentsLoader.addEventListener('click', commentsLoaderHandler);
+  commentsLoader.addEventListener('click', commentsLoaderHandler);
 }
 
 function closeBigPicture() {
@@ -114,13 +97,6 @@ closeBigPictureElement.addEventListener('click', (evt) => {
   closeBigPicture();
 });
 
-// Связь с конкретным изображением
-function setupPictureHandler(pictureElement, pictureObj) {
-  pictureElement.addEventListener('click', (evt) => {
-    evt.preventDefault();
-    makePictureBig(pictureObj);
-  });
-}
 
 function genarateStartAndEndArray() {
   const start = count;
@@ -129,4 +105,16 @@ function genarateStartAndEndArray() {
   return [start, end];
 }
 
-export { setupPictureHandler };
+function makeListOfComment(start, endOfArray, pictureObj) {
+  for (let i = start; i < endOfArray; i++) {
+    const socialCommentClone = socialComment.cloneNode(true);
+    const socialCommentImage = socialCommentClone.querySelector('img');
+    const socialCommentText = socialCommentClone.querySelector('p');
+    socialCommentShownCount.textContent = endOfArray;
+    socialCommentImage.src = pictureObj.comments[i].avatar;
+    socialCommentText.textContent = pictureObj.comments[i].message;
+    socialComments.appendChild(socialCommentClone);
+  }
+}
+
+export { makePictureBig };
