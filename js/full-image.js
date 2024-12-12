@@ -1,4 +1,6 @@
 
+import { isEscapeKey } from './utils';
+
 const bigPicture = document.querySelector('.big-picture');
 const closeBigPictureElement = bigPicture.querySelector('.big-picture__cancel');
 const bigPictureImg = bigPicture.querySelector('img');
@@ -14,7 +16,7 @@ const bodyPage = document.querySelector('body');
 let count = 5;
 
 const onDocumentKeydown = (evt) => {
-  if (evt.key === 'Escape') {
+  if (isEscapeKey(evt)) {
     evt.preventDefault();
     closeBigPicture();
   }
