@@ -6,6 +6,7 @@ const pageBody = document.querySelector('body');
 const imgUploadCancel = document.querySelector('.img-upload__cancel');
 
 const formUploadImage = document.querySelector('#upload-select-image');
+const textHashtags = formUploadImage.querySelector('.text__hashtags');
 
 let errorMessageFunc = null;
 let errorMessage = '';
@@ -41,14 +42,16 @@ function closeEditorImage() {
   errorMessage = '';
 }
 
-//прослушевание обработчика изменение закрузки фото
-imageInput.addEventListener('change', (evt) => {
-  evt.preventDefault();
-  openEditorImage();
-});
+const initializeImageEditorHandlers = () => {
+  // Прослушивание изменения фото
+  imageInput.addEventListener('change', (evt) => {
+    evt.preventDefault();
+    openEditorImage();
+  });
 
-// включит кнопку закрытия
-imgUploadCancel.addEventListener('click', closeEditorImage);
+  // Включение кнопки закрытия
+  imgUploadCancel.addEventListener('click', closeEditorImage);
+};
 
 // Инициализация Pristine
 const pristine = new Pristine(formUploadImage, {
@@ -113,9 +116,6 @@ function validateHeshtag(value) {
 
 errorMessageFunc = () => errorMessage;
 
-// Получаем input для хэштегов
-const textHashtags = formUploadImage.querySelector('.text__hashtags');
-
 // Добавляем валидацию для хэштегов
 pristine.addValidator(
   textHashtags, // Элемент input
@@ -135,4 +135,4 @@ formUploadImage.addEventListener('submit', (evt) => {
   }
 });
 
-
+export {initializeImageEditorHandlers};
