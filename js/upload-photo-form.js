@@ -7,6 +7,7 @@ const imgUploadCancel = document.querySelector('.img-upload__cancel');
 
 const formUploadImage = document.querySelector('#upload-select-image');
 const textHashtags = formUploadImage.querySelector('.text__hashtags');
+const textComment = formUploadImage.querySelector('.text__description');
 
 let errorMessageFunc = null;
 let errorMessage = '';
@@ -53,6 +54,8 @@ const initializeImageEditorHandlers = () => {
   imgUploadCancel.addEventListener('click', closeEditorImage);
 };
 
+initializeImageEditorHandlers();
+
 // Инициализация Pristine
 const pristine = new Pristine(formUploadImage, {
   classTo: 'img-upload__field-wrapper',
@@ -95,12 +98,12 @@ function validateHeshtag(value) {
       errorMessage = 'Хэштег не может состоять только из символа `#`.';
       return false;
     }
-    if (!regex.test(tag)) {
-      errorMessage = 'Хэштег может содержать только буквы и цифры, без пробелов, спецсимволов или эмодзи.';
-      return false;
-    }
     if (tag.length > maxLength) {
       errorMessage = 'Хэштег не может быть длиннее 20 символов, включая символ `#`.';
+      return false;
+    }
+    if (!regex.test(tag)) {
+      errorMessage = 'Хэштег может содержать только буквы и цифры, без пробелов, спецсимволов или эмодзи.';
       return false;
     }
 
@@ -114,12 +117,29 @@ function validateHeshtag(value) {
   return true; // Все валидации прошли успешно
 }
 
+// Валидационная функция для проверки коммента
+function validateComment(value) {
+  const maxLengthComment = 140;
+  if (value.length > maxLengthComment) {
+    errorMessage = 'Комментарий слишком длинный. Максимальная длина составляет 140 символов. Пожалуйста, сократите текст.';
+    return false;
+  }
+  return true;
+}
+
 errorMessageFunc = () => errorMessage;
 
 // Добавляем валидацию для хэштегов
 pristine.addValidator(
   textHashtags, // Элемент input
   validateHeshtag,
+  errorMessageFunc
+);
+
+// Добавляем валидацию для коммента
+pristine.addValidator (
+  textComment,
+  validateComment,
   errorMessageFunc
 );
 
@@ -130,9 +150,9 @@ formUploadImage.addEventListener('submit', (evt) => {
   const isValid = pristine.validate(); // Проверяем валидацию
   if (isValid) {
     console.log('Форма валидна, можно отправлять');
+    textHashtags.value = textHashtags.value.trim().replaceAll(/\s+/g, ' ');
+    formUploadImage.submit();
   } else {
     console.log('Форма невалидна, проверьте поля');
   }
 });
-
-export {initializeImageEditorHandlers};
