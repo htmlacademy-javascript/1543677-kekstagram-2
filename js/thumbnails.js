@@ -22,7 +22,7 @@ dataArrayObject.forEach((data)=> {
   pictureClone.addEventListener('click', (evt) => {
     evt.preventDefault();
     makePictureBig(data);
-  })
+  });
   pictureListFragment.appendChild(pictureClone);
 });
 
