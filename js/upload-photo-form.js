@@ -117,7 +117,7 @@ noUiSlider.create(sliderElement, {
 sliderElement.noUiSlider.on('update', () => {
   effectLevelValue = sliderElement.noUiSlider.get();
   if (effectName === 'none') {
-    effectLevel.value = '';
+    image.style.filter = `grayscale(${effectLevelValue})`;
   } else if (effectName === 'chrome') {
     image.style.filter = `grayscale(${effectLevelValue})`;
   }else if (effectName === 'sepia') {
@@ -198,6 +198,9 @@ function changeEffectParametr (evt) {
   effectName = evt.target.value;
   if (effectName === 'none') {
     effectLevel.classList.add('hidden');
+    sliderElement.noUiSlider.updateOptions({
+      start: 0,
+    });
   } else if (effectName === 'chrome' || effectName === 'sepia') {
     effectLevel.classList.remove('hidden');
     sliderElement.noUiSlider.updateOptions({
