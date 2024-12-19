@@ -1,5 +1,7 @@
 import { isEscapeKey } from './utils';
 
+const SCALE_STEP = 0.25;
+
 const imageInput = document.querySelector('.img-upload__input');
 const uploadOverlay = document.querySelector('.img-upload__overlay');
 const pageBody = document.querySelector('body');
@@ -9,8 +11,38 @@ const formUploadImage = document.querySelector('#upload-select-image');
 const textHashtags = formUploadImage.querySelector('.text__hashtags');
 const textComment = formUploadImage.querySelector('.text__description');
 
+const bigger = document.querySelector('.scale__control--bigger');
+const smaller = document.querySelector('.scale__control--smaller');
+const controlValue = document.querySelector('.scale__control--value');
+const image = document.querySelector('.img-upload__preview img');
+
+const sliderElement = document.querySelector('.effect-level__slider');
+const effectLevel = document.querySelector('.effect-level');
+const effectLevelValue = document.querySelector('.effect-level__value');
+const effectsList = document.querySelector('.effects__list');
+
 let errorMessageFunc = null;
 let errorMessage = '';
+let scale = 1;
+let effectName = 'none';
+
+effectLevel.classList.add('hidden');
+
+function makeBiggerImage() {
+  if (scale < 1) {
+    scale += SCALE_STEP;
+    image.style.transform = `scale(${scale})`;
+    controlValue.value = `${scale * 100}%`;
+  }
+}
+
+function makeSmallerImage() {
+  if (scale > SCALE_STEP) {
+    scale -= SCALE_STEP;
+    image.style.transform = `scale(${scale})`;
+    controlValue.value = `${scale * 100}%`;
+  }
+}
 
 // при нажати Escape закрывается
 const onDocumentKeydown = (evt) => {
@@ -41,20 +73,18 @@ function closeEditorImage() {
   imageInput.value = ''; // Сурет таңдауды тазалау
   errorMessageFunc = null;
   errorMessage = '';
+  scale = 1;
+  image.style.transform = `scale(${scale})`;
 }
 
-const initializeImageEditorHandlers = () => {
-  // Прослушивание изменения фото
-  imageInput.addEventListener('change', (evt) => {
-    evt.preventDefault();
-    openEditorImage();
-  });
+// Прослушивание изменения фото
+imageInput.addEventListener('change', (evt) => {
+  evt.preventDefault();
+  openEditorImage();
+});
 
-  // Включение кнопки закрытия
-  imgUploadCancel.addEventListener('click', closeEditorImage);
-};
-
-initializeImageEditorHandlers();
+// Включение кнопки закрытия
+imgUploadCancel.addEventListener('click', closeEditorImage);
 
 // Инициализация Pristine
 const pristine = new Pristine(formUploadImage, {
@@ -63,6 +93,43 @@ const pristine = new Pristine(formUploadImage, {
   errorTextClass: 'img-upload__field-wrapper--error'
 });
 
+noUiSlider.create(sliderElement, {
+  start: 0,
+  connect: 'lower',
+  step: 0.1,
+  range: {
+    'min': 0,
+    'max': 1
+  },
+  format: {
+    to: function (value) {
+      if (Number.isInteger(value)) {
+        return value.toFixed(0);
+      }
+      return value.toFixed(1);
+    },
+    from: function (value) {
+      return parseFloat(value);
+    },
+  },
+});
+
+sliderElement.noUiSlider.on('update', () => {
+  effectLevelValue = sliderElement.noUiSlider.get();
+  if (effectName === 'none') {
+    effectLevel.value = '';
+  } else if (effectName === 'chrome') {
+    image.style.filter = `grayscale(${effectLevelValue})`;
+  }else if (effectName === 'sepia') {
+    image.style.filter = `sepia(${effectLevelValue})`;
+  } else if (effectName === 'marvin') {
+    image.style.filter = `invert(${effectLevelValue}%)`;
+  } else if (effectName === 'phobos') {
+    image.style.filter = `blur(${effectLevelValue}px)`;
+  }else if (effectName === 'heat') {
+    image.style.filter = `brightness(${effectLevelValue})`;
+  }
+});
 
 // Валидационная функция для проверки хэштегов
 function validateHeshtag(value) {
@@ -127,6 +194,43 @@ function validateComment(value) {
   return true;
 }
 
+function changeEffectParametr (evt) {
+  effectName = evt.target.value;
+  if (effectName === 'none') {
+    effectLevel.classList.add('hidden');
+  } else if (effectName === 'chrome' || effectName === 'sepia') {
+    effectLevel.classList.remove('hidden');
+    sliderElement.noUiSlider.updateOptions({
+      range: {
+        min: 0,
+        max: 1
+      },
+      start: 0,
+      step: 0.1
+    });
+  } else if (effectName === 'marvin') {
+    effectLevel.classList.remove('hidden');
+    sliderElement.noUiSlider.updateOptions({
+      range: {
+        min: 0,
+        max: 100
+      },
+      start: 0,
+      step: 1
+    });
+  } else if (effectName === 'phobos' || effectName === 'heat') {
+    effectLevel.classList.remove('hidden');
+    sliderElement.noUiSlider.updateOptions({
+      range: {
+        min: 0,
+        max: 3
+      },
+      start: 0,
+      step: 0.1
+    });
+  }
+}
+
 errorMessageFunc = () => errorMessage;
 
 // Добавляем валидацию для хэштегов
@@ -143,16 +247,19 @@ pristine.addValidator (
   errorMessageFunc
 );
 
+bigger.addEventListener('click', makeBiggerImage);
+smaller.addEventListener('click', makeSmallerImage);
+effectsList.addEventListener('click', changeEffectParametr);
+
 // Обработка события отправки формы
 formUploadImage.addEventListener('submit', (evt) => {
   evt.preventDefault(); // Отменяем стандартное поведение
 
   const isValid = pristine.validate(); // Проверяем валидацию
   if (isValid) {
-    console.log('Форма валидна, можно отправлять');
     textHashtags.value = textHashtags.value.trim().replaceAll(/\s+/g, ' ');
     formUploadImage.submit();
-  } else {
-    console.log('Форма невалидна, проверьте поля');
   }
 });
+
+
