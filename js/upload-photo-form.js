@@ -75,6 +75,8 @@ function closeEditorImage() {
   errorMessage = '';
   scale = 1;
   image.style.transform = `scale(${scale})`;
+  effectLevel.classList.add('hidden');
+  image.style.filter = `grayscale(${sliderElement.noUiSlider.set(0)})`;
 }
 
 // Прослушивание изменения фото
