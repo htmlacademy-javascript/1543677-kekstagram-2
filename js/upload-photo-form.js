@@ -18,7 +18,7 @@ const image = document.querySelector('.img-upload__preview img');
 
 const sliderElement = document.querySelector('.effect-level__slider');
 const effectLevel = document.querySelector('.effect-level');
-const effectLevelValue = document.querySelector('.effect-level__value');
+let effectLevelValue = document.querySelector('.effect-level__value');
 const effectsList = document.querySelector('.effects__list');
 
 let errorMessageFunc = null;
