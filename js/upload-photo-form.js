@@ -1,5 +1,5 @@
-import { isEscapeKey } from './utils';
-import { fetchData } from './api';
+import { isEscapeKey, showSuccessMessage, showErrorMessage } from './utils';
+import { sendData } from './api';
 
 const SCALE_STEP = 0.25;
 const maxHashtags = 5;
@@ -278,7 +278,12 @@ const unblockSubmitButton = () => {
   submitButton.textContent = SubmitButtonText.IDLE;
 };
 
-const handleFormSubmit = (successCallback, errorCallback) => {
+const successCallbackFunc = () => {
+  showSuccessMessage();
+  closeEditorImage();
+};
+
+const handleFormSubmit = () => {
   formUploadImage.addEventListener('submit', (evt) => {
     evt.preventDefault();
 
@@ -291,19 +296,12 @@ const handleFormSubmit = (successCallback, errorCallback) => {
       const formData = new FormData(evt.target);
       formData.set('effect-level', effectLevelValue);
 
-      fetchData(
-        'https://31.javascript.htmlacademy.pro/kekstagram/',
-        successCallback,
-        errorCallback,
-        {
-          method: 'POST',
-          body: formData,
-        }
-      ).finally(unblockSubmitButton);
+      sendData(formData).then(successCallbackFunc).catch(showErrorMessage).finally(unblockSubmitButton);
+
     }
   });
 };
 
-export {handleFormSubmit, closeEditorImage};
+export {handleFormSubmit};
 
 
