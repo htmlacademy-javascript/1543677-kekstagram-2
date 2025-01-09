@@ -1,6 +1,15 @@
-import { isEscapeKey } from './utils';
+import { isEscapeKey, showSuccessMessage, showErrorMessage } from './utils';
+import { sendData } from './api';
 
 const SCALE_STEP = 0.25;
+const maxHashtags = 5;
+const maxLength = 20;
+const maxLengthComment = 140;
+
+const SubmitButtonText = {
+  IDLE: 'Опублековать',
+  SENDING: 'Сохраняю...'
+};
 
 const imageInput = document.querySelector('.img-upload__input');
 const uploadOverlay = document.querySelector('.img-upload__overlay');
@@ -20,6 +29,9 @@ const sliderElement = document.querySelector('.effect-level__slider');
 const effectLevel = document.querySelector('.effect-level');
 let effectLevelValue = document.querySelector('.effect-level__value');
 const effectsList = document.querySelector('.effects__list');
+const effectsRadio = document.querySelector('.effects__radio');
+
+const submitButton = document.querySelector('#upload-submit');
 
 let errorMessageFunc = null;
 let errorMessage = '';
@@ -75,8 +87,12 @@ function closeEditorImage() {
   errorMessage = '';
   scale = 1;
   image.style.transform = `scale(${scale})`;
+  controlValue.value = `${100}%`;
   effectLevel.classList.add('hidden');
-  image.style.filter = `grayscale(${sliderElement.noUiSlider.set(0)})`;
+  image.style.filter = '';
+  textHashtags.value = '';
+  textComment.value = '';
+  effectsRadio.checked = true;
 }
 
 // Прослушивание изменения фото
@@ -119,7 +135,7 @@ noUiSlider.create(sliderElement, {
 sliderElement.noUiSlider.on('update', () => {
   effectLevelValue = sliderElement.noUiSlider.get();
   if (effectName === 'none') {
-    image.style.filter = `grayscale(${effectLevelValue})`;
+    image.style.filter = '';
   } else if (effectName === 'chrome') {
     image.style.filter = `grayscale(${effectLevelValue})`;
   }else if (effectName === 'sepia') {
@@ -135,9 +151,6 @@ sliderElement.noUiSlider.on('update', () => {
 
 // Валидационная функция для проверки хэштегов
 function validateHeshtag(value) {
-  const maxHashtags = 5;
-  const maxLength = 20;
-
   // Если поле пустое, разрешаем
   if (value.length === 0) {
     return true;
@@ -183,12 +196,11 @@ function validateHeshtag(value) {
     }
   }
 
-  return true; // Все валидации прошли успешно
+  return true;
 }
 
 // Валидационная функция для проверки коммента
 function validateComment(value) {
-  const maxLengthComment = 140;
   if (value.length > maxLengthComment) {
     errorMessage = 'Комментарий слишком длинный. Максимальная длина составляет 140 символов. Пожалуйста, сократите текст.';
     return false;
@@ -240,7 +252,7 @@ errorMessageFunc = () => errorMessage;
 
 // Добавляем валидацию для хэштегов
 pristine.addValidator(
-  textHashtags, // Элемент input
+  textHashtags,
   validateHeshtag,
   errorMessageFunc
 );
@@ -256,15 +268,40 @@ bigger.addEventListener('click', makeBiggerImage);
 smaller.addEventListener('click', makeSmallerImage);
 effectsList.addEventListener('click', changeEffectParametr);
 
-// Обработка события отправки формы
-formUploadImage.addEventListener('submit', (evt) => {
-  evt.preventDefault(); // Отменяем стандартное поведение
+const blockSubmitButton = () => {
+  submitButton.disabled = true;
+  submitButton.textContent = SubmitButtonText.SENDING;
+};
 
-  const isValid = pristine.validate(); // Проверяем валидацию
-  if (isValid) {
-    textHashtags.value = textHashtags.value.trim().replaceAll(/\s+/g, ' ');
-    formUploadImage.submit();
-  }
-});
+const unblockSubmitButton = () => {
+  submitButton.disabled = false;
+  submitButton.textContent = SubmitButtonText.IDLE;
+};
+
+const successCallbackFunc = () => {
+  showSuccessMessage();
+  closeEditorImage();
+};
+
+const handleFormSubmit = () => {
+  formUploadImage.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+
+    const isValid = pristine.validate();
+    if (isValid) {
+      blockSubmitButton();
+      textHashtags.value = textHashtags.value.trim().replaceAll(/\s+/g, ' ');
+      textComment.value = textComment.value.trim().replaceAll(/\s+/g, ' ');
+
+      const formData = new FormData(evt.target);
+      formData.set('effect-level', effectLevelValue);
+
+      sendData(formData).then(successCallbackFunc).catch(showErrorMessage).finally(unblockSubmitButton);
+
+    }
+  });
+};
+
+export {handleFormSubmit};
 
 
