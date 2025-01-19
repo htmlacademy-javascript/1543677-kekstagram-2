@@ -1,12 +1,15 @@
 import { makePictureBig } from './full-image.js';
 
+const picturesContainer = document.querySelector('.pictures');
+
+const template = document.querySelector('#picture').content;
+const pictureTemplate = template.querySelector('.picture');
+
+const pictureListFragment = document.createDocumentFragment();
+
 export function initPageData (datas) {
-  const picturesContainer = document.querySelector('.pictures');
-
-  const template = document.querySelector('#picture').content;
-  const pictureTemplate = template.querySelector('.picture');
-
-  const pictureListFragment = document.createDocumentFragment();
+  const pictures = picturesContainer.querySelectorAll('.picture');
+  pictures.forEach((picture) => picture.remove());
 
   datas.forEach((data)=> {
     const pictureClone = pictureTemplate.cloneNode(true);
