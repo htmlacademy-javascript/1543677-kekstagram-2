@@ -27,7 +27,7 @@ const image = document.querySelector('.img-upload__preview img');
 
 const sliderElement = document.querySelector('.effect-level__slider');
 const effectLevel = document.querySelector('.effect-level');
-let effectLevelValue = document.querySelector('.effect-level__value');
+const effectLevelValue = document.querySelector('.effect-level__value');
 const effectsList = document.querySelector('.effects__list');
 const effectsRadio = document.querySelector('.effects__radio');
 
@@ -133,19 +133,19 @@ noUiSlider.create(sliderElement, {
 });
 
 sliderElement.noUiSlider.on('update', () => {
-  effectLevelValue = sliderElement.noUiSlider.get();
+  effectLevelValue.value = sliderElement.noUiSlider.get();
   if (effectName === 'none') {
     image.style.filter = '';
   } else if (effectName === 'chrome') {
-    image.style.filter = `grayscale(${effectLevelValue})`;
+    image.style.filter = `grayscale(${effectLevelValue.value})`;
   }else if (effectName === 'sepia') {
-    image.style.filter = `sepia(${effectLevelValue})`;
+    image.style.filter = `sepia(${effectLevelValue.value})`;
   } else if (effectName === 'marvin') {
-    image.style.filter = `invert(${effectLevelValue}%)`;
+    image.style.filter = `invert(${effectLevelValue.value}%)`;
   } else if (effectName === 'phobos') {
-    image.style.filter = `blur(${effectLevelValue}px)`;
+    image.style.filter = `blur(${effectLevelValue.value}px)`;
   }else if (effectName === 'heat') {
-    image.style.filter = `brightness(${effectLevelValue})`;
+    image.style.filter = `brightness(${effectLevelValue.value})`;
   }
 });
 
@@ -290,12 +290,7 @@ const handleFormSubmit = () => {
     const isValid = pristine.validate();
     if (isValid) {
       blockSubmitButton();
-      textHashtags.value = textHashtags.value.trim().replaceAll(/\s+/g, ' ');
-      textComment.value = textComment.value.trim().replaceAll(/\s+/g, ' ');
-
       const formData = new FormData(evt.target);
-      formData.set('effect-level', effectLevelValue);
-
       sendData(formData).then(successCallbackFunc).catch(showErrorMessage).finally(unblockSubmitButton);
 
     }
