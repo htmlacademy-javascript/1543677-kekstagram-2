@@ -15,5 +15,6 @@ fileChooser.addEventListener('change', () => {
     effectsPreview.forEach((item) => {
       item.style.backgroundImage = `url(${URL.createObjectURL(file)})`;
     });
+
   }
 });
