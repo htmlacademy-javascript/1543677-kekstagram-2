@@ -93,6 +93,7 @@ function closeEditorImage() {
   textHashtags.value = '';
   textComment.value = '';
   effectsRadio.checked = true;
+  resetForm();
 }
 
 // Прослушивание изменения фото
@@ -110,6 +111,11 @@ const pristine = new Pristine(formUploadImage, {
   errorTextParent: 'img-upload__field-wrapper',
   errorTextClass: 'img-upload__field-wrapper--error'
 });
+
+function resetForm() {
+  formUploadImage.reset(); // Форманы тазалау
+  pristine.reset(); // Pristine қателерін қалпына келтіру
+}
 
 noUiSlider.create(sliderElement, {
   start: 0,
@@ -157,7 +163,7 @@ function validateHeshtag(value) {
   }
 
   const tags = value.trim().split(/\s+/).map((word) => word.toLowerCase());
-  const regex = /^#[a-zA-Z0-9]{1,19}$/i;
+  const regex = /^#[a-zA-Z0-9а-яА-Я]{1,19}$/i;
 
   if (!value.trim()) {
     return true; // Хэштеги необязательны
@@ -222,7 +228,7 @@ function changeEffectParametr (evt) {
         min: 0,
         max: 1
       },
-      start: 0,
+      start: 1,
       step: 0.1
     });
   } else if (effectName === 'marvin') {
@@ -232,7 +238,7 @@ function changeEffectParametr (evt) {
         min: 0,
         max: 100
       },
-      start: 0,
+      start: 100,
       step: 1
     });
   } else if (effectName === 'phobos' || effectName === 'heat') {
@@ -242,7 +248,7 @@ function changeEffectParametr (evt) {
         min: 0,
         max: 3
       },
-      start: 0,
+      start: 3,
       step: 0.1
     });
   }
@@ -288,10 +294,16 @@ const handleFormSubmit = () => {
     evt.preventDefault();
 
     const isValid = pristine.validate();
+    if (!isValid) {
+      return;
+    }
     if (isValid) {
       blockSubmitButton();
       const formData = new FormData(evt.target);
-      sendData(formData).then(successCallbackFunc).catch(showErrorMessage).finally(unblockSubmitButton);
+      sendData(formData).then(() => {
+        successCallbackFunc();
+        pristine.reset();
+      }).catch(showErrorMessage).finally(unblockSubmitButton);
 
     }
   });
