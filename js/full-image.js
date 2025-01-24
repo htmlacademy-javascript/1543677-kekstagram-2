@@ -13,7 +13,8 @@ const socialComment = socialComments.querySelector('.social__comment');
 const socialCaption = bigPicture.querySelector('.social__caption');
 const bodyPage = document.querySelector('body');
 
-let count = 5;
+const COMMENTS_STEP = 5;
+let count = COMMENTS_STEP;
 
 const onDocumentKeydown = (evt) => {
   if (isEscapeKey(evt)) {
@@ -33,7 +34,7 @@ function makePictureBig(pictureObj) {
 
   socialComments.innerHTML = '';
 
-  const endOfArray = Math.min(pictureObj.comments.length, 5);
+  const endOfArray = Math.min(pictureObj.comments.length, COMMENTS_STEP);
   if (endOfArray !== 0) {
     makeListOfComment(0, endOfArray, pictureObj);
   } else {
@@ -90,7 +91,7 @@ function closeBigPicture() {
     commentsLoaderHandler = null; // Очищаем ссылку, чтобы предотвратить утечки памяти
   }
 
-  count = 5;
+  count = COMMENTS_STEP;
 }
 
 // Закрытие модального окна
@@ -102,7 +103,7 @@ closeBigPictureElement.addEventListener('click', (evt) => {
 
 function genarateStartAndEndArray() {
   const start = count;
-  count += 5;
+  count += COMMENTS_STEP;
   const end = count;
   return [start, end];
 }
@@ -114,6 +115,7 @@ function makeListOfComment(start, endOfArray, pictureObj) {
     const socialCommentText = socialCommentClone.querySelector('p');
     socialCommentShownCount.textContent = endOfArray;
     socialCommentImage.src = pictureObj.comments[i].avatar;
+    socialCommentImage.alt = pictureObj.comments[i].name;
     socialCommentText.textContent = pictureObj.comments[i].message;
     socialComments.appendChild(socialCommentClone);
   }

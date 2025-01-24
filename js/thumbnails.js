@@ -18,8 +18,8 @@ export function initPageData (datas) {
     const pictureLikes = pictureClone.querySelector('.picture__likes');
     pictureImage.src = data.url;
     pictureImage.alt = data.description;
-    pictureComments.texContent = data.comments.length;
-    pictureLikes.texContent = data.likes;
+    pictureComments.textContent = data.comments.length;
+    pictureLikes.textContent = data.likes;
     pictureClone.addEventListener('click', (evt) => {
       evt.preventDefault();
       makePictureBig(data);
