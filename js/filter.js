@@ -1,27 +1,26 @@
 import { initPageData } from './thumbnails.js';
 import { debounce } from './utils.js';
 
+const DEBOUNCE_DELAY = 500;
+
 const imageFiltersContainer = document.querySelector('.img-filters');
 let picturesArray = [];
 
-const debouncedHandleFilterClick = debounce(handleFilterClick, 500);
+const debouncedRenderPictures = debounce(initPageData, DEBOUNCE_DELAY);
 
-// Фильтрді көрсету
-function toggleActiveFilter(button) {
+const toggleActiveFilter = (button) => {
   const buttons = document.querySelectorAll('.img-filters__button');
   buttons.forEach((btn) => btn.classList.remove('img-filters__button--active'));
   button.classList.add('img-filters__button--active');
-}
-
-// Массивті өңдеудің функциялары
-const processArray = {
-  'filter-default': (array) => [...array], // Массив өзгермейді
-  'filter-discussed': (array) => [...array].sort((a, b) => b.comments.length - a.comments.length), // Кему ретімен сұрыптау
-  'filter-random': (array) => [...array].sort(() => Math.random() - 0.5).slice(0, 10), // Кездейсоқ 10 элемент алу
 };
 
-// Фильтрлермен жұмыс істеу
-function handleFilterClick(event) {
+const processArray = {
+  'filter-default': (array) => [...array],
+  'filter-discussed': (array) => [...array].sort((a, b) => b.comments.length - a.comments.length),
+  'filter-random': (array) => [...array].sort(() => Math.random() - 0.5).slice(0, 10),
+};
+
+const handleFilterClick = (event) => {
   if (!event.target.classList.contains('img-filters__button') ||
       event.target.classList.contains('img-filters__button--active')) {
     return;
@@ -34,23 +33,20 @@ function handleFilterClick(event) {
     ? processArray[activeButtonId](picturesArray)
     : [...picturesArray];
 
-  // Мәліметтерді көрсету
-  initPageData(processedArray);
-}
+  debouncedRenderPictures(processedArray);
+};
 
-// Фильтрлерді қосу
-function setImageFiltersEventListener() {
+const setImageFiltersEventListener = () => {
   const imgFilters = document.querySelector('.img-filters');
   if (imgFilters) {
-    imgFilters.addEventListener('click', debouncedHandleFilterClick);
+    imgFilters.addEventListener('click', handleFilterClick);
   }
-}
+};
 
-// Фильтрлерді көрсету және массивті жаңарту
-export function showImageFilters(datas) {
+export const showImageFilters = (datas) => {
   imageFiltersContainer.classList.remove('img-filters--inactive');
   picturesArray = datas;
   initPageData(datas);
   setImageFiltersEventListener();
-}
+};
 

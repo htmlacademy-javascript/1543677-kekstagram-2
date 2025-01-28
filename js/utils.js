@@ -1,3 +1,5 @@
+import { onDocumentKeydown } from './upload-photo-form.js';
+
 export function getRandomInteger(a, b) {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -32,6 +34,7 @@ function createMessageHandler(template, closeSelectors) {
     document.removeEventListener('keydown', onEscPress);
     document.removeEventListener('click', onOutsideClick);
     closeButton.removeEventListener('click', closeMessage);
+    document.addEventListener('keydown', onDocumentKeydown);
   }
 
   function onEscPress(event) {
@@ -49,6 +52,7 @@ function createMessageHandler(template, closeSelectors) {
   return {
     showMessage: () => {
       bodyPage.appendChild(messageElement);
+      document.removeEventListener('keydown', onDocumentKeydown);
       closeButton.addEventListener('click', closeMessage);
       document.addEventListener('keydown', onEscPress);
       document.addEventListener('click', onOutsideClick);
@@ -66,14 +70,13 @@ const errorMessageHandler = createMessageHandler(templateError, {
   inner: '.error__inner',
 });
 
-// Функция устранения дребезга
-function debounce(callback, delay) {
+const debounce = (callback, delay) => {
   let timeout;
   return function (...args) {
     clearTimeout(timeout);
     timeout = setTimeout(() => callback.apply(this, args), delay);
   };
-}
+};
 
 export const showSuccessMessage = successMessageHandler.showMessage;
 export const showErrorMessage = errorMessageHandler.showMessage;

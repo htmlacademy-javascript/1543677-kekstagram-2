@@ -7,19 +7,22 @@ const pictureTemplate = template.querySelector('.picture');
 
 const pictureListFragment = document.createDocumentFragment();
 
-export function initPageData (datas) {
-  const pictures = picturesContainer.querySelectorAll('.picture');
-  pictures.forEach((picture) => picture.remove());
+const clear = () => {
+  const thumbs = picturesContainer.querySelectorAll('.picture');
+  thumbs.forEach((picture) => picture.remove());
+};
 
-  datas.forEach((data)=> {
+export const initPageData = (photos) => {
+  clear();
+  photos.forEach((data)=> {
     const pictureClone = pictureTemplate.cloneNode(true);
     const pictureImage = pictureClone.querySelector('.picture__img');
     const pictureComments = pictureClone.querySelector('.picture__comments');
     const pictureLikes = pictureClone.querySelector('.picture__likes');
     pictureImage.src = data.url;
     pictureImage.alt = data.description;
-    pictureComments.texContent = data.comments.length;
-    pictureLikes.texContent = data.likes;
+    pictureComments.textContent = data.comments.length;
+    pictureLikes.textContent = data.likes;
     pictureClone.addEventListener('click', (evt) => {
       evt.preventDefault();
       makePictureBig(data);
@@ -28,5 +31,5 @@ export function initPageData (datas) {
   });
 
   picturesContainer.appendChild(pictureListFragment);
-}
+};
 
