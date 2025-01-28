@@ -1,5 +1,5 @@
 
-import { isEscapeKey } from './utils';
+import { isEscapeKey } from './utils.js';
 
 const bigPicture = document.querySelector('.big-picture');
 const closeBigPictureElement = bigPicture.querySelector('.big-picture__cancel');
@@ -23,7 +23,6 @@ const onDocumentKeydown = (evt) => {
   }
 };
 
-// Ссылка на текущий обработчик
 let commentsLoaderHandler = null;
 
 function makePictureBig(pictureObj) {
@@ -41,9 +40,8 @@ function makePictureBig(pictureObj) {
     socialCommentShownCount.textContent = endOfArray;
   }
 
-  // Создаём и добавляем обработчик для commentsLoader
   commentsLoaderHandler = () => {
-    const [start, end] = genarateStartAndEndArray();
+    const [start, end] = generateStartAndEndArray();
 
     const endArray = Math.min(pictureObj.comments.length, end);
     makeListOfComment(start, endArray, pictureObj);
@@ -52,19 +50,18 @@ function makePictureBig(pictureObj) {
       commentsLoader.classList.add('hidden');
       if (commentsLoaderHandler) {
         commentsLoader.removeEventListener('click', commentsLoaderHandler);
-        commentsLoaderHandler = null; // Очищаем ссылку, чтобы предотвратить утечки памяти
+        commentsLoaderHandler = null;
       }
     } else {
       commentsLoader.classList.remove('hidden');
     }
-
   };
 
   if (pictureObj.comments.length <= endOfArray) {
     commentsLoader.classList.add('hidden');
     if (commentsLoaderHandler) {
       commentsLoader.removeEventListener('click', commentsLoaderHandler);
-      commentsLoaderHandler = null; // Очищаем ссылку, чтобы предотвратить утечки памяти
+      commentsLoaderHandler = null;
     }
   } else {
     commentsLoader.classList.remove('hidden');
@@ -73,7 +70,6 @@ function makePictureBig(pictureObj) {
   bodyPage.classList.add('modal-open');
   bigPicture.classList.remove('hidden');
 
-  // Добавляем обработчик нажатия клавиши
   document.addEventListener('keydown', onDocumentKeydown);
 
   commentsLoader.addEventListener('click', commentsLoaderHandler);
@@ -84,24 +80,19 @@ function closeBigPicture() {
   bodyPage.classList.remove('modal-open');
 
   document.removeEventListener('keydown', onDocumentKeydown);
-
-  // Удаляем обработчик с commentsLoader
   if (commentsLoaderHandler) {
     commentsLoader.removeEventListener('click', commentsLoaderHandler);
-    commentsLoaderHandler = null; // Очищаем ссылку, чтобы предотвратить утечки памяти
+    commentsLoaderHandler = null;
   }
-
   count = COMMENTS_STEP;
 }
 
-// Закрытие модального окна
 closeBigPictureElement.addEventListener('click', (evt) => {
   evt.preventDefault();
   closeBigPicture();
 });
 
-
-function genarateStartAndEndArray() {
+function generateStartAndEndArray() {
   const start = count;
   count += COMMENTS_STEP;
   const end = count;

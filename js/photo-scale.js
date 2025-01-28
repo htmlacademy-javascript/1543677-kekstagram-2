@@ -3,7 +3,6 @@ const smaller = document.querySelector('.scale__control--smaller');
 const controlValue = document.querySelector('.scale__control--value');
 const image = document.querySelector('.img-upload__preview img');
 
-
 const SCALE_STEP = 0.25;
 let scale = 1;
 
@@ -26,10 +25,10 @@ function makeSmallerImage() {
 bigger.addEventListener('click', makeBiggerImage);
 smaller.addEventListener('click', makeSmallerImage);
 
-function resetScale() {
+const resetScale = () => {
   scale = 1;
   image.style.transform = `scale(${scale})`;
   controlValue.value = `${100}%`;
-}
+};
 
 export {resetScale};

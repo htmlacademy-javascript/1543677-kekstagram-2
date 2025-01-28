@@ -8,11 +8,11 @@ let picturesArray = [];
 
 const debouncedRenderPictures = debounce(initPageData, DEBOUNCE_DELAY);
 
-function toggleActiveFilter(button) {
+const toggleActiveFilter = (button) => {
   const buttons = document.querySelectorAll('.img-filters__button');
   buttons.forEach((btn) => btn.classList.remove('img-filters__button--active'));
   button.classList.add('img-filters__button--active');
-}
+};
 
 const processArray = {
   'filter-default': (array) => [...array],
@@ -20,7 +20,7 @@ const processArray = {
   'filter-random': (array) => [...array].sort(() => Math.random() - 0.5).slice(0, 10),
 };
 
-function handleFilterClick(event) {
+const handleFilterClick = (event) => {
   if (!event.target.classList.contains('img-filters__button') ||
       event.target.classList.contains('img-filters__button--active')) {
     return;
@@ -34,19 +34,19 @@ function handleFilterClick(event) {
     : [...picturesArray];
 
   debouncedRenderPictures(processedArray);
-}
+};
 
-function setImageFiltersEventListener() {
+const setImageFiltersEventListener = () => {
   const imgFilters = document.querySelector('.img-filters');
   if (imgFilters) {
     imgFilters.addEventListener('click', handleFilterClick);
   }
-}
+};
 
-export function showImageFilters(datas) {
+export const showImageFilters = (datas) => {
   imageFiltersContainer.classList.remove('img-filters--inactive');
   picturesArray = datas;
   initPageData(datas);
   setImageFiltersEventListener();
-}
+};
 

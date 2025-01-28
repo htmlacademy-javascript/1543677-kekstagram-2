@@ -1,32 +1,29 @@
-import { isEscapeKey, showSuccessMessage, showErrorMessage } from "./utils";
-import { sendData } from "./api";
-import { pristine, resetPristine } from "./pristine-validate.js";
-import { resetScale } from "./photo-scale.js";
-import { resetNoUiSlider } from "./nouislider.js";
+import { isEscapeKey, showSuccessMessage, showErrorMessage } from './utils';
+import { sendData } from './api';
+import { pristine, resetPristine } from './pristine-validate.js';
+import { resetScale } from './photo-scale.js';
+import { resetNoUiSlider } from './nouislider.js';
 
 const SubmitButtonText = {
-  IDLE: "Опублековать",
-  SENDING: "Сохраняю...",
+  IDLE: 'Опубликовать',
+  SENDING: 'Сохраняю...',
 };
 
-const imageInput = document.querySelector(".img-upload__input");
-const uploadOverlay = document.querySelector(".img-upload__overlay");
-const pageBody = document.querySelector("body");
-const imgUploadCancel = document.querySelector(".img-upload__cancel");
+const imageInput = document.querySelector('.img-upload__input');
+const uploadOverlay = document.querySelector('.img-upload__overlay');
+const pageBody = document.querySelector('body');
+const imgUploadCancel = document.querySelector('.img-upload__cancel');
+const formUploadImage = document.querySelector('#upload-select-image');
+const submitButton = document.querySelector('#upload-submit');
 
-const formUploadImage = document.querySelector("#upload-select-image");
-
-const submitButton = document.querySelector("#upload-submit");
-
-// при нажати Escape закрывается
 export const onDocumentKeydown = (evt) => {
   const activeElement = document.activeElement;
   if (
     activeElement &&
-    (activeElement.classList.contains("text__hashtags") ||
-      activeElement.classList.contains("text__description"))
+    (activeElement.classList.contains('text__hashtags') ||
+      activeElement.classList.contains('text__description'))
   ) {
-    return; // Прерываем обработку, если фокус на поле ввода
+    return;
   }
 
   if (isEscapeKey(evt)) {
@@ -35,40 +32,32 @@ export const onDocumentKeydown = (evt) => {
   }
 };
 
-// Открыт Модальное окно
-function openEditorImage() {
-  uploadOverlay.classList.remove("hidden");
-  pageBody.classList.add("modal-open");
-  document.addEventListener("keydown", onDocumentKeydown);
-}
+const openEditorImage = () => {
+  uploadOverlay.classList.remove('hidden');
+  pageBody.classList.add('modal-open');
+  document.addEventListener('keydown', onDocumentKeydown);
+};
 
-// Закрыть Модальное окно
 function closeEditorImage() {
-  uploadOverlay.classList.add("hidden");
-  pageBody.classList.remove("modal-open");
-  document.removeEventListener("keydown", onDocumentKeydown);
-  imageInput.value = ""; // Сурет таңдауды тазалау
+  uploadOverlay.classList.add('hidden');
+  pageBody.classList.remove('modal-open');
+  document.removeEventListener('keydown', onDocumentKeydown);
+  imageInput.value = '';
   resetPristine();
   resetScale();
   resetNoUiSlider();
 }
 
-imageInput.addEventListener("change", (evt) => {
+imageInput.addEventListener('change', (evt) => {
   evt.preventDefault();
   openEditorImage();
 });
 
-// Включение кнопки закрытия
-imgUploadCancel.addEventListener("click", closeEditorImage);
+imgUploadCancel.addEventListener('click', closeEditorImage);
 
-const blockSubmitButton = () => {
-  submitButton.disabled = true;
-  submitButton.textContent = SubmitButtonText.SENDING;
-};
-
-const unblockSubmitButton = () => {
-  submitButton.disabled = false;
-  submitButton.textContent = SubmitButtonText.IDLE;
+const blockSubmitButton = (isBlocked = true) => {
+  submitButton.disabled = isBlocked;
+  submitButton.textContent = isBlocked ? SubmitButtonText.SENDING : SubmitButtonText.IDLE;
 };
 
 const successCallbackFunc = () => {
@@ -77,7 +66,7 @@ const successCallbackFunc = () => {
 };
 
 const handleFormSubmit = () => {
-  formUploadImage.addEventListener("submit", (evt) => {
+  formUploadImage.addEventListener('submit', (evt) => {
     evt.preventDefault();
 
     const isValid = pristine.validate();
@@ -92,7 +81,9 @@ const handleFormSubmit = () => {
           successCallbackFunc();
         })
         .catch(showErrorMessage)
-        .finally(unblockSubmitButton);
+        .finally(() => {
+          blockSubmitButton(false);
+        });
     }
   });
 };
