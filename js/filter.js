@@ -14,23 +14,23 @@ const toggleActiveFilter = (button) => {
   button.classList.add('img-filters__button--active');
 };
 
-const processArray = {
-  'filter-default': (array) => [...array],
-  'filter-discussed': (array) => [...array].sort((a, b) => b.comments.length - a.comments.length),
-  'filter-random': (array) => [...array].sort(() => Math.random() - 0.5).slice(0, 10),
+const processPhotos = {
+  'filter-default': (photos) => [...photos],
+  'filter-discussed': (photos) => [...photos].sort((a, b) => b.comments.length - a.comments.length),
+  'filter-random': (photos) => [...photos].sort(() => Math.random() - 0.5).slice(0, 10),
 };
 
-const handleFilterClick = (event) => {
+const onImgFiltersClick = (event) => {
   if (!event.target.classList.contains('img-filters__button') ||
-      event.target.classList.contains('img-filters__button--active')) {
+    event.target.classList.contains('img-filters__button--active')) {
     return;
   }
 
   const activeButtonId = event.target.id;
   toggleActiveFilter(event.target);
 
-  const processedArray = processArray[activeButtonId]
-    ? processArray[activeButtonId](picturesArray)
+  const processedArray = processPhotos[activeButtonId]
+    ? processPhotos[activeButtonId](picturesArray)
     : [...picturesArray];
 
   debouncedRenderPictures(processedArray);
@@ -39,7 +39,7 @@ const handleFilterClick = (event) => {
 const setImageFiltersEventListener = () => {
   const imgFilters = document.querySelector('.img-filters');
   if (imgFilters) {
-    imgFilters.addEventListener('click', handleFilterClick);
+    imgFilters.addEventListener('click', onImgFiltersClick);
   }
 };
 

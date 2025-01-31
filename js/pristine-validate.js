@@ -1,6 +1,3 @@
-const formUploadImage = document.querySelector('#upload-select-image');
-const textHashtags = formUploadImage.querySelector('.text__hashtags');
-const textComment = formUploadImage.querySelector('.text__description');
 
 const MAX_HASHTAGS = 5;
 const MAX_HASHTAG_LENGTH = 20;
@@ -16,6 +13,12 @@ const ERROR_MESSAGES = {
   commentTooLong: 'Комментарий слишком длинный. Максимальная длина составляет 140 символов. Пожалуйста, сократите текст.'
 };
 
+const regex = /^#[a-zA-Z0-9а-яА-Я]{1,19}$/i;
+
+const formUploadImage = document.querySelector('#upload-select-image');
+const textHashtags = formUploadImage.querySelector('.text__hashtags');
+const textComment = formUploadImage.querySelector('.text__description');
+
 let errorMessage = '';
 
 const pristine = new Pristine(formUploadImage, {
@@ -24,10 +27,7 @@ const pristine = new Pristine(formUploadImage, {
   errorTextClass: 'img-upload__field-wrapper--error'
 });
 
-const validateHashtagFormat = (tag) => {
-  const regex = /^#[a-zA-Z0-9а-яА-Я]{1,19}$/i;
-  return regex.test(tag);
-};
+const validateHashtagFormat = (tag) => regex.test(tag);
 
 const validateHashtags = (value) => {
   if (!value.trim()) {

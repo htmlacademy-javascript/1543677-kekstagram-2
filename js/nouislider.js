@@ -48,7 +48,7 @@ sliderElement.noUiSlider.on('update', () => {
   updateImageFilter(value);
 });
 
-const changeEffectParametr = (evt) => {
+const onEffectsListClick = (evt) => {
   effectName = evt.target.value;
   const settings = effectSettings[effectName] || effectSettings.none;
   updateSliderOptions(settings);
@@ -61,6 +61,6 @@ const resetNoUiSlider = () => {
   image.style.filter = '';
 };
 
-effectsList.addEventListener('click', changeEffectParametr);
+effectsList.addEventListener('click', onEffectsListClick);
 
 export { resetNoUiSlider };
