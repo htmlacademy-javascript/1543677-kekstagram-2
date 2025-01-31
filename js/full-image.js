@@ -1,5 +1,6 @@
-
 import { isEscapeKey } from './utils.js';
+
+const COMMENTS_STEP = 5;
 
 const bigPicture = document.querySelector('.big-picture');
 const closeBigPictureElement = bigPicture.querySelector('.big-picture__cancel');
@@ -13,7 +14,6 @@ const socialComment = socialComments.querySelector('.social__comment');
 const socialCaption = bigPicture.querySelector('.social__caption');
 const bodyPage = document.querySelector('body');
 
-const COMMENTS_STEP = 5;
 let count = COMMENTS_STEP;
 
 const onDocumentKeydown = (evt) => {

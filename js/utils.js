@@ -1,13 +1,5 @@
 import { onDocumentKeydown } from './upload-photo-form.js';
 
-export function getRandomInteger(a, b) {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-  return Math.floor(Math.random() * (upper - lower + 1) + lower);
-}
-
-export const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
-
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
 const bodyPage = document.querySelector('body');
@@ -29,23 +21,23 @@ function createMessageHandler(template, closeSelectors) {
   const closeButton = messageElement.querySelector(closeSelectors.button);
   const innerElement = messageElement.querySelector(closeSelectors.inner);
 
-  function closeMessage() {
+  function onCloseButtonClick() {
     messageElement.remove();
-    document.removeEventListener('keydown', onEscPress);
+    document.removeEventListener('keydown', onDocumentKeydownHandler);
     document.removeEventListener('click', onOutsideClick);
-    closeButton.removeEventListener('click', closeMessage);
+    closeButton.removeEventListener('click', onCloseButtonClick);
     document.addEventListener('keydown', onDocumentKeydown);
   }
 
-  function onEscPress(event) {
+  function onDocumentKeydownHandler(event) {
     if (isEscapeKey(event)) {
-      closeMessage();
+      onCloseButtonClick();
     }
   }
 
   function onOutsideClick(event) {
     if (!innerElement.contains(event.target)) {
-      closeMessage();
+      onCloseButtonClick();
     }
   }
 
@@ -53,8 +45,8 @@ function createMessageHandler(template, closeSelectors) {
     showMessage: () => {
       bodyPage.appendChild(messageElement);
       document.removeEventListener('keydown', onDocumentKeydown);
-      closeButton.addEventListener('click', closeMessage);
-      document.addEventListener('keydown', onEscPress);
+      closeButton.addEventListener('click', onCloseButtonClick);
+      document.addEventListener('keydown', onDocumentKeydownHandler);
       document.addEventListener('click', onOutsideClick);
     },
   };

@@ -1,12 +1,13 @@
+const SCALE_STEP = 0.25;
+
 const bigger = document.querySelector('.scale__control--bigger');
 const smaller = document.querySelector('.scale__control--smaller');
 const controlValue = document.querySelector('.scale__control--value');
 const image = document.querySelector('.img-upload__preview img');
 
-const SCALE_STEP = 0.25;
 let scale = 1;
 
-function makeBiggerImage() {
+function onBiggerButtonClick() {
   if (scale < 1) {
     scale += SCALE_STEP;
     image.style.transform = `scale(${scale})`;
@@ -14,7 +15,7 @@ function makeBiggerImage() {
   }
 }
 
-function makeSmallerImage() {
+function onSmallerButtonClick() {
   if (scale > SCALE_STEP) {
     scale -= SCALE_STEP;
     image.style.transform = `scale(${scale})`;
@@ -22,8 +23,8 @@ function makeSmallerImage() {
   }
 }
 
-bigger.addEventListener('click', makeBiggerImage);
-smaller.addEventListener('click', makeSmallerImage);
+bigger.addEventListener('click', onBiggerButtonClick);
+smaller.addEventListener('click', onSmallerButtonClick);
 
 const resetScale = () => {
   scale = 1;
@@ -31,4 +32,4 @@ const resetScale = () => {
   controlValue.value = `${100}%`;
 };
 
-export {resetScale};
+export { resetScale };

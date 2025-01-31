@@ -28,7 +28,7 @@ export const onDocumentKeydown = (evt) => {
 
   if (isEscapeKey(evt)) {
     evt.preventDefault();
-    closeEditorImage();
+    onImgUploadCancelClick();
   }
 };
 
@@ -38,7 +38,7 @@ const openEditorImage = () => {
   document.addEventListener('keydown', onDocumentKeydown);
 };
 
-function closeEditorImage() {
+function onImgUploadCancelClick() {
   uploadOverlay.classList.add('hidden');
   pageBody.classList.remove('modal-open');
   document.removeEventListener('keydown', onDocumentKeydown);
@@ -53,16 +53,16 @@ imageInput.addEventListener('change', (evt) => {
   openEditorImage();
 });
 
-imgUploadCancel.addEventListener('click', closeEditorImage);
+imgUploadCancel.addEventListener('click', onImgUploadCancelClick);
 
 const blockSubmitButton = (isBlocked = true) => {
   submitButton.disabled = isBlocked;
   submitButton.textContent = isBlocked ? SubmitButtonText.SENDING : SubmitButtonText.IDLE;
 };
 
-const successCallbackFunc = () => {
+const handleSuccess = () => {
   showSuccessMessage();
-  closeEditorImage();
+  onImgUploadCancelClick();
 };
 
 const handleFormSubmit = () => {
@@ -78,7 +78,7 @@ const handleFormSubmit = () => {
       const formData = new FormData(evt.target);
       sendData(formData)
         .then(() => {
-          successCallbackFunc();
+          handleSuccess();
         })
         .catch(showErrorMessage)
         .finally(() => {
