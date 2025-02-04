@@ -2,6 +2,7 @@
 const MAX_HASHTAGS = 5;
 const MAX_HASHTAG_LENGTH = 20;
 const MAX_COMMENT_LENGTH = 140;
+const REGEX = /^#[a-zA-Z0-9а-яА-Я]{1,19}$/i;
 
 const ERROR_MESSAGES = {
   tooManyHashtags: 'Нельзя использовать больше пяти хэштегов.',
@@ -12,8 +13,6 @@ const ERROR_MESSAGES = {
   duplicateHashtag: 'Один и тот же хэштег нельзя использовать несколько раз.',
   commentTooLong: 'Комментарий слишком длинный. Максимальная длина составляет 140 символов. Пожалуйста, сократите текст.'
 };
-
-const regex = /^#[a-zA-Z0-9а-яА-Я]{1,19}$/i;
 
 const formUploadImage = document.querySelector('#upload-select-image');
 const textHashtags = formUploadImage.querySelector('.text__hashtags');
@@ -27,7 +26,7 @@ const pristine = new Pristine(formUploadImage, {
   errorTextClass: 'img-upload__field-wrapper--error'
 });
 
-const validateHashtagFormat = (tag) => regex.test(tag);
+const validateHashtagFormat = (tag) => REGEX.test(tag);
 
 const validateHashtags = (value) => {
   if (!value.trim()) {
@@ -75,10 +74,10 @@ const validateComment = (value) => {
   return true;
 };
 
-const errorMessageFunc = () => errorMessage;
+const getErrorMessage = () => errorMessage;
 
-pristine.addValidator(textHashtags, validateHashtags, errorMessageFunc);
-pristine.addValidator(textComment, validateComment, errorMessageFunc);
+pristine.addValidator(textHashtags, validateHashtags, getErrorMessage);
+pristine.addValidator(textComment, validateComment, getErrorMessage);
 
 function resetPristine() {
   formUploadImage.reset();

@@ -12,9 +12,9 @@ const clear = () => {
   thumbs.forEach((picture) => picture.remove());
 };
 
-export const initPageData = (photos) => {
+export const renderPhotoThumbnails = (photos) => {
   clear();
-  photos.forEach((data)=> {
+  photos.forEach((data) => {
     const pictureClone = pictureTemplate.cloneNode(true);
     const pictureImage = pictureClone.querySelector('.picture__img');
     const pictureComments = pictureClone.querySelector('.picture__comments');

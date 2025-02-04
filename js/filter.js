@@ -1,12 +1,12 @@
-import { initPageData } from './thumbnails.js';
-import { debounce } from './utils.js';
+import { renderPhotoThumbnails } from './thumbnails.js';
+import { createDebouncedFunction } from './utils.js';
 
 const DEBOUNCE_DELAY = 500;
 
 const imageFiltersContainer = document.querySelector('.img-filters');
-let picturesArray = [];
+let pictures = [];
 
-const debouncedRenderPictures = debounce(initPageData, DEBOUNCE_DELAY);
+const debouncedRenderPictures = createDebouncedFunction(renderPhotoThumbnails, DEBOUNCE_DELAY);
 
 const toggleActiveFilter = (button) => {
   const buttons = document.querySelectorAll('.img-filters__button');
@@ -30,8 +30,8 @@ const onImgFiltersClick = (event) => {
   toggleActiveFilter(event.target);
 
   const processedArray = processPhotos[activeButtonId]
-    ? processPhotos[activeButtonId](picturesArray)
-    : [...picturesArray];
+    ? processPhotos[activeButtonId](pictures)
+    : [...pictures];
 
   debouncedRenderPictures(processedArray);
 };
@@ -43,10 +43,10 @@ const setImageFiltersEventListener = () => {
   }
 };
 
-export const showImageFilters = (datas) => {
+export const showImageFilters = (data) => {
   imageFiltersContainer.classList.remove('img-filters--inactive');
-  picturesArray = datas;
-  initPageData(datas);
+  pictures = data;
+  renderPhotoThumbnails(data);
   setImageFiltersEventListener();
 };
 

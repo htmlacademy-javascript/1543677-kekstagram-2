@@ -23,13 +23,13 @@ function createMessageHandler(template, closeSelectors) {
 
   function onCloseButtonClick() {
     messageElement.remove();
-    document.removeEventListener('keydown', onDocumentKeydownHandler);
+    document.removeEventListener('keydown', onDocumentEscape);
     document.removeEventListener('click', onOutsideClick);
     closeButton.removeEventListener('click', onCloseButtonClick);
     document.addEventListener('keydown', onDocumentKeydown);
   }
 
-  function onDocumentKeydownHandler(event) {
+  function onDocumentEscape(event) {
     if (isEscapeKey(event)) {
       onCloseButtonClick();
     }
@@ -46,7 +46,7 @@ function createMessageHandler(template, closeSelectors) {
       bodyPage.appendChild(messageElement);
       document.removeEventListener('keydown', onDocumentKeydown);
       closeButton.addEventListener('click', onCloseButtonClick);
-      document.addEventListener('keydown', onDocumentKeydownHandler);
+      document.addEventListener('keydown', onDocumentEscape);
       document.addEventListener('click', onOutsideClick);
     },
   };
@@ -62,7 +62,7 @@ const errorMessageHandler = createMessageHandler(templateError, {
   inner: '.error__inner',
 });
 
-const debounce = (callback, delay) => {
+const createDebouncedFunction = (callback, delay) => {
   let timeout;
   return function (...args) {
     clearTimeout(timeout);
@@ -72,6 +72,6 @@ const debounce = (callback, delay) => {
 
 export const showSuccessMessage = successMessageHandler.showMessage;
 export const showErrorMessage = errorMessageHandler.showMessage;
-export { isEscapeKey, debounce };
+export { isEscapeKey, createDebouncedFunction };
 
 
